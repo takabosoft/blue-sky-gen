@@ -7,15 +7,32 @@ export class Vec3 {
 
     }
 
+    static readonly zero = new Vec3(0, 0, 0);
+
     get r() { return this.x; }
     get g() { return this.y; }
     get b() { return this.z; }
+    get length() { return Math.sqrt(this.x ** 2 + this.y ** 2 + this.z ** 2); }
+    get normal() {
+        const len = this.length;
+        return len > 0 ? new Vec3(this.x / len, this.y / len, this.z / len) : Vec3.zero;
+    }
 
     add(o: Vec3): Vec3 {
         return new Vec3(this.x + o.x, this.y + o.y, this.z + o.z);
     }
 
+    sub(o: Vec3): Vec3 {
+        return new Vec3(this.x - o.x, this.y - o.y, this.z - o.z);
+    }
+
     mul(v: number): Vec3 {
         return new Vec3(this.x * v, this.y * v, this.z * v);
+    }
+
+    
+
+    static mix(v1: Vec3, v2: Vec3, a: number): Vec3 {
+        return v1.mul(1 - a).add(v2.mul(a));
     }
 }
