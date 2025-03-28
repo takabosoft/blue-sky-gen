@@ -30,9 +30,18 @@ export class Vec3 {
         return new Vec3(this.x * v, this.y * v, this.z * v);
     }
 
-    
+    /** 外積 */
+    cross(v: Vec3): Vec3 {
+        return new Vec3(
+            this.y * v.z - this.z * v.y,
+            this.z * v.x - this.x * v.z,
+            this.x * v.y - this.y * v.x
+        );
+    }
 
     static mix(v1: Vec3, v2: Vec3, a: number): Vec3 {
         return v1.mul(1 - a).add(v2.mul(a));
     }
+
+
 }
