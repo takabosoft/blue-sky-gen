@@ -4,6 +4,11 @@ import { Vec3 } from "./vec3";
 import { Ray } from "./ray";
 import { clamp } from "./mathUtils";
 
+const fbmTable: { scale: number, depth: number }[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(i => ({
+    scale: 0.0006 * 4 ** i,
+    depth: (0.5 ** i),
+}))
+
 export class Cloud {
     private readonly cloudCol = new Vec3(1, 1, 1);
     private readonly minY = 100;
@@ -15,6 +20,7 @@ export class Cloud {
         private readonly maxSteps: number,
         private readonly alphaScale: number,
         private readonly maxY: number,
+        private readonly fbmSteps: number,
     ) {
     }
 
@@ -27,17 +33,17 @@ export class Cloud {
         return t;
     }
 
-    private getNoise(pos: Vec3, scale: number, threshold: number): number {
-        const noise = this.noise(pos.x * scale, pos.y * scale, pos.z * scale);
-        const noise2 = (noise + 1) / 2; // 0-1
-        return noise2 >= threshold ? ((noise2 - threshold) * (1 / (1 - threshold))) : 0;
+    private getNoise(pos: Vec3, scale: number): number {
+        return this.noise(pos.x * scale, pos.y * scale, pos.z * scale);
     }
 
-    private sampleCloudDensity(p: Vec3): number {
-        
-        return this.getNoise(p.add(new Vec3(1000, 0, 0)), 0.001, 0.2) ** 2 * this.getNoise(p, 0.03, 0.3) ** 2 + this.getNoise(p, 0.001, 0.2) * this.getNoise(p, 0.008, 0.3) ** 2
-        //return this.getNoise(p, 0.001, 0.2) * this.getNoise(p, 0.01, 0.5) + this.getNoise(p, 0.005, 0.5) * this.getNoise(p, 0.002, 0.5) + this.getNoise(p, 0.0001, 0.2) * 0.1;
-        //return this.getNoise(p, 0.001, 0.2) * this.getNoise(p, 0.01, 0.5) + this.getNoise(p, 0.005, 0.5) * this.getNoise(p, 0.002, 0.5) + this.getNoise(p, 0.0001, 0.2) * 0.1 + this.getNoise(p.add(new Vec3(1000, 0, 0)), 0.001, 0.2) ** 2 * this.getNoise(p, 0.03, 0.3) ** 2 + this.getNoise(p, 0.001, 0.2) * this.getNoise(p, 0.008, 0.3) ** 2;
+    private sampleCloudDensity(p: Vec3): number {   
+        // FBM
+        let res = 0;
+        for (let i = 0; i < this.fbmSteps; i++) {
+            res += this.getNoise(p, fbmTable[i].scale) * fbmTable[i].depth;
+        }
+        return res;
     }
 
     private march(r: Ray): number {
@@ -55,7 +61,7 @@ export class Cloud {
 
         for (let i = 0; i < maxSteps; i++) {
             const p = r.at(t);
-            if ((p.sub(r.origin)).length > 1000) { break; }
+            //if ((p.sub(r.origin)).length > 5000) { break; }
             const density = this.sampleCloudDensity(p);
             const alpha = clamp(density * stepSize * alphaValue, 0, 1);
             

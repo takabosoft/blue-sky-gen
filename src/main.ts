@@ -89,7 +89,7 @@ class PageController {
     }
 
     preview() {
-        const cloud = new Cloud(this.noise, 40, this.alphaScale, this.maxY);
+        const cloud = new Cloud(this.noise, 40, this.alphaScale, this.maxY, 4);
         const canvasWidth = this.canvas.width;
         const canvasHeight = this.canvas.height;
         const imageData = this.canvas.ctx.createImageData(this.canvas.width, this.canvas.height);
@@ -116,7 +116,7 @@ class PageController {
         const height = Math.max(Math.floor(parseInt(this.heightInput.val() + "")), 1);
         this.render?.destroy();
         const camera = this.createCamera(width, height);
-        this.render = new Render(width, height, new Cloud(this.noise, 100, this.alphaScale, this.maxY), camera);
+        this.render = new Render(width, height, new Cloud(this.noise, 100, this.alphaScale, this.maxY, 10), camera);
         this.resultDiv.empty().append(
             $(this.render!.canvas.canvas).addClass("render-canvas"),
         );
