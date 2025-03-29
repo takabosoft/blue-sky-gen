@@ -7,10 +7,15 @@ import { clamp } from "./mathUtils";
 export class Cloud {
     private readonly cloudCol = new Vec3(1, 1, 1);
     private readonly minY = 100;
-    private readonly maxY = 200;
+    
     private skybox = new Skybox();
 
-    constructor(private readonly noise: NoiseFunction3D) {
+    constructor(
+        private readonly noise: NoiseFunction3D,
+        private readonly maxSteps: number,
+        private readonly alphaScale: number,
+        private readonly maxY: number,
+    ) {
     }
 
     private calcHitAtY(y: number, ray: Ray): number | undefined {
@@ -40,8 +45,9 @@ export class Cloud {
         const tMin = this.calcHitAtY(this.minY, r);
         const tMax = this.calcHitAtY(this.maxY, r);
         if (tMin == null || tMax == null ){ return 0; }
-        const maxSteps = 40;
+        const maxSteps = this.maxSteps;
         const stepSize = (tMax - tMin) / maxSteps;
+        const alphaValue = this.alphaScale;
 
         let t = tMin;
 
@@ -49,7 +55,7 @@ export class Cloud {
             const p = r.at(t);
             if ((p.sub(r.origin)).length > 1000) { break; }
             const density = this.sampleCloudDensity(p);
-            const alpha = clamp(density * stepSize * 0.030, 0, 1);
+            const alpha = clamp(density * stepSize * alphaValue, 0, 1);
             
             accumulatedDensity += alpha * transmittance;
             transmittance *= (1.0 - alpha);
