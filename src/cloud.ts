@@ -1,19 +1,16 @@
-import alea from "alea";
-import { createNoise3D, NoiseFunction3D } from "simplex-noise";
+import { NoiseFunction3D } from "simplex-noise";
 import { Skybox } from "./skybox";
 import { Vec3 } from "./vec3";
 import { Ray } from "./ray";
 import { clamp } from "./mathUtils";
 
 export class Cloud {
-    private readonly noise: NoiseFunction3D;
     private readonly cloudCol = new Vec3(1, 1, 1);
     private readonly minY = 100;
     private readonly maxY = 200;
     private skybox = new Skybox();
 
-    constructor(seed: string) {
-        this.noise = createNoise3D(alea(seed))
+    constructor(private readonly noise: NoiseFunction3D) {
     }
 
     private calcHitAtY(y: number, ray: Ray): number | undefined {
@@ -50,7 +47,7 @@ export class Cloud {
 
         for (let i = 0; i < maxSteps; i++) {
             const p = r.at(t);
-            if (p.length > 1000) { break; }
+            if ((p.sub(r.origin)).length > 1000) { break; }
             const density = this.sampleCloudDensity(p);
             const alpha = clamp(density * stepSize * 0.030, 0, 1);
             
