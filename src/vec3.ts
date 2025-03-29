@@ -39,6 +39,10 @@ export class Vec3 {
         );
     }
 
+    dot(v: Vec3): number {
+        return this.x * v.x + this.y * v.y + this.z * v.z;
+    }
+
     static mix(v1: Vec3, v2: Vec3, a: number): Vec3 {
         return v1.mul(1 - a).add(v2.mul(a));
     }

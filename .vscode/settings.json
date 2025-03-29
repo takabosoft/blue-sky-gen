@@ -11,7 +11,8 @@
     ],
     "scss.format.spaceAroundSelectorSeparator": true,
     "cSpell.words": [
-        "lerp"
+        "lerp",
+        "Skybox"
     ],
     "files.eol": "\n",
     "explorer.compactFolders": false,
