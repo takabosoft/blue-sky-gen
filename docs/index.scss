@@ -39,6 +39,10 @@ h2 {
     display: grid;
     grid-template-columns: auto auto;
     gap: 4px;
+
+    > input {
+        width: 300px;
+    }
 }
 
 button {

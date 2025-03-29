@@ -34,8 +34,10 @@ export class Cloud {
     }
 
     private sampleCloudDensity(p: Vec3): number {
-        //return this.getNoise(p, 0.01, 0.3) * this.getNoise(p, 0.001, 0) + this.getNoise(p, 0.5, 0.5) * this.getNoise(p, 0.002, 0.5);
-        return this.getNoise(p, 0.001, 0.2) * this.getNoise(p, 0.01, 0.5) + this.getNoise(p, 0.005, 0.5) * this.getNoise(p, 0.002, 0.5) + this.getNoise(p, 0.0001, 0.2) * 0.1;
+        
+        return this.getNoise(p.add(new Vec3(1000, 0, 0)), 0.001, 0.2) ** 2 * this.getNoise(p, 0.03, 0.3) ** 2 + this.getNoise(p, 0.001, 0.2) * this.getNoise(p, 0.008, 0.3) ** 2
+        //return this.getNoise(p, 0.001, 0.2) * this.getNoise(p, 0.01, 0.5) + this.getNoise(p, 0.005, 0.5) * this.getNoise(p, 0.002, 0.5) + this.getNoise(p, 0.0001, 0.2) * 0.1;
+        //return this.getNoise(p, 0.001, 0.2) * this.getNoise(p, 0.01, 0.5) + this.getNoise(p, 0.005, 0.5) * this.getNoise(p, 0.002, 0.5) + this.getNoise(p, 0.0001, 0.2) * 0.1 + this.getNoise(p.add(new Vec3(1000, 0, 0)), 0.001, 0.2) ** 2 * this.getNoise(p, 0.03, 0.3) ** 2 + this.getNoise(p, 0.001, 0.2) * this.getNoise(p, 0.008, 0.3) ** 2;
     }
 
     private march(r: Ray): number {

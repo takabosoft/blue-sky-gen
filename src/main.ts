@@ -1,5 +1,6 @@
 /**
  * Build: npx webpack -w
+ * Release Build: npx webpack --mode=production
  * Server: npx live-server docs
  */
 
@@ -19,7 +20,7 @@ class PageController {
         this._noise = undefined;
         this.preview();
     });
-    private readonly targetYSlider = $(`<input type="range" min="0" max="3" step="0.001" value="0.9">`).on("input", () => this.preview());
+    private readonly targetYSlider = $(`<input type="range" min="0.6" max="3" step="0.001" value="0.9">`).on("input", () => this.preview());
     private readonly cameraZSlider = $(`<input type="range" min="0" max="10000" step="0.001" value="0">`).on("input", () => this.preview());
     private readonly alphaScaleSlider = $(`<input type="range" min="0" max="0.05" step="0.001" value="0.03">`).on("input", () => this.preview());
     private readonly maxYSlider = $(`<input type="range" min="150" max="400" step="0.001" value="200">`).on("input", () => this.preview());
@@ -57,6 +58,14 @@ class PageController {
                 $(`<div>`).text("※生成には時間が掛かります。終わったら画像を右クリックしてコピーや保存を行ってください。"),
             ),
             this.resultDiv,
+            $(`<h2>`).text("その他"),
+            $(`<ul>`).append(
+                [
+                    "単純な青空を計算で生成します。",
+                    "生成した画像の著作権は利用者に帰属します。商用利用可能です（クレジット表記などは歓迎いたします）。",
+                    "3Dシンプレックスノイズとレイマーチングを使って雲を3次元風にレンダリングしていますが、ライティング処理が無いためかリアリティにはやや欠けます。",
+                ].map(p => $(`<li>`).text(p)),
+            )
 
         );
         this.preview();
