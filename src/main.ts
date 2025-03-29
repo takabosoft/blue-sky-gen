@@ -9,12 +9,22 @@ import { Canvas } from "./canvas";
 import { Ray } from "./ray";
 import { Vec3 } from "./vec3";
 import { clamp } from "./mathUtils";
+import alea from "alea";
 
 
 
 $(() => {
     new App();
 });
+
+function calcHitAtY(y: number, ray: Ray): number | undefined {
+    if (ray.direction.y == 0) { return undefined; }
+    const t = (y - ray.origin.y) / ray.direction.y;
+    if (t <= 0) {
+        return undefined;
+    }
+    return t;
+}
 
 class FlatCloud {
     private readonly noise = createNoise2D();
@@ -43,9 +53,13 @@ class FlatCloud {
     }
 }
 
+const seed = 'seed';
+
 class VolumeCloud {
-    private readonly noise = createNoise3D();
+    private readonly noise = createNoise3D(alea(seed));
     private readonly cloudCol = new Vec3(1, 1, 1);
+    private readonly minY = 100;
+    private readonly maxY = 200;
 
     private getNoise(pos: Vec3, scale: number, threshold: number): number {
         const noise = this.noise(pos.x * scale, pos.y * scale, pos.z * scale);
@@ -54,31 +68,32 @@ class VolumeCloud {
     }
 
     private sampleCloudDensity(p: Vec3): number {
-        if (p.y > 100 && p.y < 200) {
+        if (p.y >= this.minY && p.y <= this.maxY) {
             return this.getNoise(p, 0.01, 0.3);
         }
         return 0;
     }
 
-    private march(r: Ray) {
+    private march(r: Ray): number {
         let accumulatedDensity = 0.0; // 密度の累積
         let transmittance = 1.0; // 透過率
     
-        const maxSteps = 400;
-        const stepSize = 1;
-        let t = 80;
+        const tMin = calcHitAtY(this.minY, r);
+        const tMax = calcHitAtY(this.maxY, r);
+        if (tMin == null || tMax == null ){ return 0; }
+        const maxSteps = 50;
+        const stepSize = (tMax - tMin) / maxSteps;
+
+        let t = tMin;
+
         for (let i = 0; i < maxSteps; i++) {
             const p = r.at(t);
+            if (p.length > 1000) { break; }
             const density = this.sampleCloudDensity(p);
-            if (p.y > 200) { break; }
-    
             const alpha = clamp(density * stepSize * 0.008, 0, 1);
-    
             accumulatedDensity += alpha * transmittance;
             transmittance *= (1.0 - alpha);
-    
             if (transmittance < 0.01) break;
-    
             t += stepSize;
         }
     
@@ -92,7 +107,7 @@ class VolumeCloud {
 
 class App {
     private readonly canvas = new Canvas(640, 480);
-    private targetY = 0.5;
+    private targetY = 0.9;
     private cloud = new VolumeCloud();
     private imageData: ImageData;
 
