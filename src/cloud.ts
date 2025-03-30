@@ -6,7 +6,6 @@ import { clamp } from "./mathUtils";
 
 export class Cloud {
     private readonly cloudCol = new Vec3(1, 1, 1);
-    private readonly minY = 100;
     private readonly fbmTable: readonly { scale: number, depth: number }[];
     private skybox = new Skybox();
 
@@ -14,6 +13,7 @@ export class Cloud {
         private readonly noise: NoiseFunction3D,
         private readonly maxSteps: number,
         private readonly alphaScale: number,
+        private readonly minY: number,
         private readonly maxY: number,
         fbmSteps: number,
         fbmScale: number,
