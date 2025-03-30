@@ -12,7 +12,7 @@ const fbmTable: { scale: number, depth: number }[] = [0, 1, 2, 3, 4, 5, 6, 7, 8,
 export class Cloud {
     private readonly cloudCol = new Vec3(1, 1, 1);
     private readonly minY = 100;
-    
+
     private skybox = new Skybox();
 
     constructor(
@@ -37,7 +37,7 @@ export class Cloud {
         return this.noise(pos.x * scale, pos.y * scale, pos.z * scale);
     }
 
-    private sampleCloudDensity(p: Vec3): number {   
+    private sampleCloudDensity(p: Vec3): number {
         // FBM
         let res = 0;
         for (let i = 0; i < this.fbmSteps; i++) {
@@ -49,28 +49,27 @@ export class Cloud {
     private march(r: Ray): number {
         let accumulatedDensity = 0.0; // 密度の累積
         let transmittance = 1.0; // 透過率
-    
+
         const tMin = this.calcHitAtY(this.minY, r);
         const tMax = this.calcHitAtY(this.maxY, r);
-        if (tMin == null || tMax == null ){ return 0; }
+        if (tMin == null || tMax == null) { return 0; }
         const maxSteps = this.maxSteps;
         const stepSize = (tMax - tMin) / maxSteps;
-        const alphaValue = this.alphaScale;
+        const alphaScale = this.alphaScale;
 
         let t = tMin;
 
         for (let i = 0; i < maxSteps; i++) {
             const p = r.at(t);
-            //if ((p.sub(r.origin)).length > 5000) { break; }
             const density = this.sampleCloudDensity(p);
-            const alpha = clamp(density * stepSize * alphaValue, 0, 1);
-            
+            const alpha = clamp(density * stepSize * alphaScale, 0, 1);
+
             accumulatedDensity += alpha * transmittance;
             transmittance *= (1.0 - alpha);
             if (transmittance < 0.01) break;
             t += stepSize;
         }
-    
+
         return clamp(accumulatedDensity, 0, 1);
     }
 

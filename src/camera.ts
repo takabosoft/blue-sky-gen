@@ -31,7 +31,7 @@ export class Camera {
         this.lowerLeftCorner = this.origin.sub(this.horizontal.mul(0.5)).sub(this.vertical.mul(0.5)).sub(w);
     }
 
-    get_ray(u: number, v: number): Ray {
+    getRay(u: number, v: number): Ray {
         return new Ray(this.origin, this.lowerLeftCorner.add(this.horizontal.mul(u)).add(this.vertical.mul(v)).sub(this.origin).normal);
     }
 }
