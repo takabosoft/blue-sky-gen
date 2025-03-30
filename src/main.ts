@@ -27,9 +27,9 @@ class PageController {
 
     private readonly widthInput = $(`<input type="number" min="1" value="800">`);
     private readonly heightInput = $(`<input type="number" min="1" value="600">`);
-    private readonly resultDiv = $(`<div>`);
+    private readonly resultDiv = $(`<div class="render-result">`);
 
-    private render?: Render;
+    private render?: ExportRenderer;
 
     constructor() {
         $(document.body).append(
@@ -54,7 +54,7 @@ class PageController {
                 this.widthInput,
                 $(`<div>`).text("×"),
                 this.heightInput,
-                $(`<button>`).text("高画質画像生成").on("click", () => this.startRender()),
+                $(`<button>`).text("高画質画像生成").on("click", () => this.renderForExport()),
                 $(`<div>`).text("※生成には時間が掛かります。終わったら画像を右クリックしてコピーや保存を行ってください。"),
             ),
             this.resultDiv,
@@ -111,25 +111,25 @@ class PageController {
         this.canvas.ctx.putImageData(imageData, 0, 0);
     }
 
-    private startRender() {
+    private renderForExport() {
         const width = Math.max(Math.floor(parseInt(this.widthInput.val() + "")), 1);
         const height = Math.max(Math.floor(parseInt(this.heightInput.val() + "")), 1);
         this.render?.destroy();
         const camera = this.createCamera(width, height);
-        this.render = new Render(width, height, new Cloud(this.noise, 100, this.alphaScale, this.maxY, 10), camera);
+        this.render = new ExportRenderer(width, height, new Cloud(this.noise, 100, this.alphaScale, this.maxY, 10), camera);
         this.resultDiv.empty().append(
-            $(this.render!.canvas.canvas).addClass("render-canvas"),
+            $(this.render!.canvas.canvas),
         );
         this.render.start();
     }
 }
 
-class Render {
+class ExportRenderer {
     readonly canvas: Canvas;
     private enable = true;
 
     constructor(
-        width: number, 
+        width: number,
         height: number,
         private readonly cloud: Cloud,
         private readonly camera: Camera,
@@ -166,7 +166,12 @@ class Render {
             j++;
             if (j < this.canvas.height) {
                 requestAnimationFrame(frame);
-            }    
+            } else {
+                // <img>に置き換えます。スマホ対応
+                const img = new Image();
+                img.src = this.canvas.canvas.toDataURL("image/png");
+                $(this.canvas.canvas).replaceWith(img);
+            }
         }
         requestAnimationFrame(frame);
     }

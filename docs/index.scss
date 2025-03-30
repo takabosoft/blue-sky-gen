@@ -1,3 +1,11 @@
+$breakpoint-mobile: 800px;
+
+@mixin mobile {
+    @media screen and (max-width: $breakpoint-mobile) {
+        @content;
+    }
+}
+
 body,
 html {
     box-sizing: border-box;
@@ -11,6 +19,10 @@ body {
     font-size: 16px;
     font-weight: 400;
     padding: 16px;
+
+    @include mobile {
+        padding: 8px;
+    }
 }
 
 h1 {
@@ -30,18 +42,31 @@ h2 {
 }
 
 .preview-container {
-    display: flex;
-    align-items: center;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px;
+
+    > canvas {
+        border: 1px solid #aaaaaa;
+    }
+
+    @include mobile {
+        grid-template-columns: 1fr;
+    }
 }
 
 .preview-params {
-    margin-left: 16px;
     display: grid;
-    grid-template-columns: auto auto;
+    grid-template-columns: auto 1fr;
     gap: 4px;
 
-    > input {
-        width: 300px;
+    > :nth-child(odd) {
+        text-align: right;
+        white-space: nowrap;
+    }
+
+    > :nth-child(even) {
+        max-width: 400px;
     }
 }
 
@@ -56,20 +81,28 @@ button {
     display: flex;
     align-items: center;
     margin-bottom: 8px;
+    flex-wrap: wrap;
+
+    > :not(:last-child) {
+        flex-shrink: 0;
+    }
 
     > * + * {
         margin-left: 8px;
     }
-     
+
     > input {
         width: 80px;
     }
 }
 
-.render-canvas {
-    display: block;
-    background-color: #ffffff;
-    background-image: linear-gradient(45deg, #e8e8e8 25%, transparent 25%, transparent 75%, #e8e8e8 75%), linear-gradient(45deg, #e8e8e8 25%, transparent 25%, transparent 75%, #e8e8e8 75%);
-    background-position: 10px 10px, 30px 30px;
-    background-size: 40px 40px;
+.render-result {
+    > * {
+        display: block;
+        background-color: #ffffff;
+        background-image: linear-gradient(45deg, #e8e8e8 25%, transparent 25%, transparent 75%, #e8e8e8 75%), linear-gradient(45deg, #e8e8e8 25%, transparent 25%, transparent 75%, #e8e8e8 75%);
+        background-position: 10px 10px, 30px 30px;
+        background-size: 40px 40px;
+        border: 1px solid #aaaaaa;
+    }
 }
