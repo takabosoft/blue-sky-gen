@@ -25,6 +25,8 @@ class PageController {
     private readonly cameraZSlider = $(`<input type="range" min="0" max="10000" step="0.001" value="0">`).on("input", () => this.preview());
     private readonly alphaScaleSlider = $(`<input type="range" min="0" max="0.05" step="0.001" value="0.03">`).on("input", () => this.preview());
     private readonly maxYSlider = $(`<input type="range" min="110" max="800" step="0.001" value="200">`).on("input", () => this.preview());
+    private readonly fbmScaleSlider = $(`<input type="range" min="0.00001" max="0.01" step="0.00001" value="0.0006">`).on("input", () => this.preview());
+    private readonly fbmDepthSlider = $(`<input type="range" min="0.1" max="2" step="0.001" value="0.5">`).on("input", () => this.preview());
 
     private readonly widthInput = $(`<input type="number" min="1" value="800">`);
     private readonly heightInput = $(`<input type="number" min="1" value="600">`);
@@ -38,16 +40,13 @@ class PageController {
             $(`<div class="preview-container">`).append(
                 this.previewRenderer.canvas.canvas,
                 $(`<div class="preview-params">`).append(
-                    $(`<div>`).text("シード値："),
-                    this.seedInput,
-                    $(`<div>`).text("カメラの向き："),
-                    this.targetYSlider,
-                    $(`<div>`).text("カメラ位置："),
-                    this.cameraZSlider,
-                    $(`<div>`).text("雲の濃さ："),
-                    this.alphaScaleSlider,
-                    $(`<div>`).text("雲の厚み："),
-                    this.maxYSlider,
+                    $(`<div>`).text("シード値："), this.seedInput,
+                    $(`<div>`).text("カメラの向き："), this.targetYSlider,
+                    $(`<div>`).text("カメラ位置："), this.cameraZSlider,
+                    $(`<div>`).text("雲の濃さ："), this.alphaScaleSlider,
+                    $(`<div>`).text("雲の厚み："), this.maxYSlider,
+                    $(`<div>`).text("雲の広がり："), this.fbmScaleSlider,
+                    $(`<div>`).text("雲の細部強調："), this.fbmDepthSlider,
                 )
             ),
             $(`<h2>`).text("2. 問題無ければ生成ボタンを押してください。"),
@@ -90,7 +89,9 @@ class PageController {
     }
 
     private createCloud(preview: boolean): Cloud {
-        return new Cloud(this.noise, preview ? 20 : 100, this.alphaScale, this.maxY, preview ? 4 : 10);
+        const fbmScale = parseFloat(this.fbmScaleSlider.val() + "");
+        const fbmDepth = parseFloat(this.fbmDepthSlider.val() + "");
+        return new Cloud(this.noise, preview ? 20 : 100, this.alphaScale, this.maxY, preview ? 4 : 10, fbmScale, fbmDepth);
     }
 
     private preview() {

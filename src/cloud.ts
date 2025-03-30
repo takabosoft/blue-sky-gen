@@ -4,15 +4,10 @@ import { Vec3 } from "./vec3";
 import { Ray } from "./ray";
 import { clamp } from "./mathUtils";
 
-const fbmTable: { scale: number, depth: number }[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(i => ({
-    scale: 0.0006 * 4 ** i,
-    depth: (0.5 ** i),
-}))
-
 export class Cloud {
     private readonly cloudCol = new Vec3(1, 1, 1);
     private readonly minY = 100;
-
+    private readonly fbmTable: readonly { scale: number, depth: number }[];
     private skybox = new Skybox();
 
     constructor(
@@ -20,8 +15,18 @@ export class Cloud {
         private readonly maxSteps: number,
         private readonly alphaScale: number,
         private readonly maxY: number,
-        private readonly fbmSteps: number,
+        fbmSteps: number,
+        fbmScale: number,
+        fbmDepth: number,
     ) {
+        let table: { scale: number, depth: number }[] = [];
+        for (let i = 0; i < fbmSteps; i++) {
+            table.push({
+                scale: fbmScale * (4 ** i),
+                depth: (fbmDepth ** i),
+            })
+        }
+        this.fbmTable = table;
     }
 
     private calcHitAtY(y: number, ray: Ray): number | undefined {
@@ -40,8 +45,8 @@ export class Cloud {
     private sampleCloudDensity(p: Vec3): number {
         // FBM
         let res = 0;
-        for (let i = 0; i < this.fbmSteps; i++) {
-            res += this.getNoise(p, fbmTable[i].scale) * fbmTable[i].depth;
+        for (const fbm of this.fbmTable) {
+            res += this.getNoise(p, fbm.scale) * fbm.depth;
         }
         return res;
     }
