@@ -67,6 +67,7 @@ class PageController {
                     "生成した画像の著作権は利用者に帰属します。商用利用可能です（クレジット表記などは歓迎いたします）。",
                     "3Dシンプレックスノイズとレイマーチングを使って雲を3次元風にレンダリングしていますが、ライティング処理が無いためかリアリティにはやや欠けます。",
                 ].map(p => $(`<li>`).text(p)),
+                $(`<li>`).html(`ソースコードはこちら：<a href="https://github.com/takabosoft/blue-sky-gen" target="_blank">https://github.com/takabosoft/blue-sky-gen</a>`),
             )
 
         );
