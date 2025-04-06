@@ -1,5 +1,5 @@
 {
-    "name": "blue-sky-gen",
+    "name": "blue-sky-gen2",
     "version": "1.0.0",
     "main": "index.js",
     "directories": {
@@ -14,9 +14,7 @@
     "description": "",
     "dependencies": {
         "@types/jquery": "^3.5.32",
-        "alea": "^1.0.1",
         "live-server": "^1.2.2",
-        "simplex-noise": "^4.0.3",
         "ts-loader": "^9.5.2",
         "typescript": "^5.8.2",
         "webpack": "^5.98.0",
