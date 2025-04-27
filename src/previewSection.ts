@@ -42,7 +42,7 @@ export class PreviewSection {
     );
 
     constructor() {
-        this.loadPreset(`{"targetY":1.24175,"cameraZ":-19.88072,"cameraX":2067.59443,"cloudMinY":100,"cloudThickness":329.999999,"cloudAlphaScale":0.03,"fbmScale":0.0006,"fbmDepth":0.5,"fbmThreshold":0.62247,"skyColorFader":0,"cloudMaxSteps":40,"fbmMaxSteps":10,"fbmMinSteps":2}`);
+        this.loadPreset(`{"targetY":1.24175,"cameraZ":-19.88072,"cameraX":2067.59443,"cloudMinY":100,"cloudThickness":329.999999,"cloudAlphaScale":0.03,"fbmScale":0.0006,"fbmDepth":0.65,"fbmThreshold":0.62247,"skyColorFader":0,"cloudMaxSteps":40,"fbmMaxSteps":10,"fbmMinSteps":2}`);
         this.preview();
     }
 

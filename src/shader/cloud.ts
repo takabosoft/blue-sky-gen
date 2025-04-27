@@ -13,7 +13,7 @@ float fbm(vec3 p) {
             break;
         }
     
-        float scale = u_fbmScale * pow(4.0, float(i));
+        float scale = u_fbmScale * pow(2.0, float(i));
         float depth = pow(u_fbmDepth, float(i));
         float noise = snoise(p * scale);
         if (i == 0) {
